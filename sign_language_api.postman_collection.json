@@ -1,0 +1,119 @@
+{
+    "info": {
+        "_postman_id": "12345-6789-abcdef-12345",
+        "name": "Sign Language API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Register User",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\",\n    \"phone_number\": \"1234567890\",\n    \"address\": \"123 Street, City\",\n    \"user_type\": \"user\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:5000/register",
+                    "protocol": "http",
+                    "host": ["127.0.0.1"],
+                    "port": "5000",
+                    "path": ["register"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Login User",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"phone_number\": \"1234567890\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:5000/login",
+                    "protocol": "http",
+                    "host": ["127.0.0.1"],
+                    "port": "5000",
+                    "path": ["login"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Add Sign Video",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"character_name\": \"A\",\n    \"character_video\": \"https://example.com/videoA.mp4\"\n}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:5000/add_video",
+                    "protocol": "http",
+                    "host": ["127.0.0.1"],
+                    "port": "5000",
+                    "path": ["add_video"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get All Videos",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://127.0.0.1:5000/get_videos",
+                    "protocol": "http",
+                    "host": ["127.0.0.1"],
+                    "port": "5000",
+                    "path": ["get_videos"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Sign Images for Text",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"text\": \"AB\"\n}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:5000/get_sign_images",
+                    "protocol": "http",
+                    "host": ["127.0.0.1"],
+                    "port": "5000",
+                    "path": ["get_sign_images"]
+                }
+            },
+            "response": []
+        }
+    ]
+}
