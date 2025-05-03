@@ -1,0 +1,302 @@
+# دليل تشغيل خادم لغة الإشارة (Backend)
+
+هذا الدليل يشرح كيفية إعداد وتشغيل خادم لغة الإشارة على جهازك المحلي.
+
+## المتطلبات الأساسية
+
+1. **بايثون 3.8+**: تأكد من تثبيت بايثون 3.8 أو أحدث على جهازك.
+   - يمكنك تحميله من [الموقع الرسمي](https://www.python.org/downloads/)
+   - تحقق من الإصدار باستخدام الأمر: `python --version`
+
+2. **مدير الحزم pip**: عادة ما يأتي مع بايثون.
+   - تحقق من التثبيت باستخدام الأمر: `pip --version`
+
+## خطوات التثبيت والتشغيل
+
+### 1. تحميل المشروع
+
+قم بتحميل أو استنساخ المشروع إلى جهازك المحلي.
+
+```bash
+git clone <رابط المستودع>
+cd "Sign Language BackEnd"
+```
+
+### 2. إنشاء بيئة افتراضية (اختياري ولكن موصى به)
+
+إنشاء بيئة افتراضية يساعد في عزل المكتبات المطلوبة للمشروع عن النظام الأساسي.
+
+#### على نظام Windows:
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+#### على نظام macOS/Linux:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. تثبيت المكتبات المطلوبة
+
+قم بتثبيت جميع المكتبات المطلوبة باستخدام ملف `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. إعداد متغيرات البيئة (لإرسال الرسائل النصية)
+
+لاستخدام ميزة إرسال الرسائل النصية، يجب إعداد حساب Twilio وتحديث المتغيرات في ملف `API.py`:
+
+1. قم بإنشاء حساب على [Twilio](https://www.twilio.com/)
+2. احصل على SID ورمز المصادقة ورقم هاتف Twilio
+3. افتح ملف `API.py` وقم بتحديث المتغيرات التالية:
+
+```python
+TWILIO_ACCOUNT_SID = "YOUR_TWILIO_ACCOUNT_SID"  # قم بتغييرها إلى SID الخاص بك
+TWILIO_AUTH_TOKEN = "YOUR_TWILIO_AUTH_TOKEN"  # قم بتغييرها إلى رمز المصادقة الخاص بك
+TWILIO_PHONE_NUMBER = "+1234567890"  # قم بتغييرها إلى رقم Twilio الخاص بك
+```
+
+### 5. تشغيل الخادم
+
+#### الطريقة المباشرة:
+
+```bash
+python API.py
+```
+
+#### باستخدام Flask:
+
+```bash
+set FLASK_APP=API.py  # على Windows
+export FLASK_APP=API.py  # على macOS/Linux
+flask run
+```
+
+#### باستخدام Gunicorn (لبيئات الإنتاج على Linux/macOS):
+
+```bash
+gunicorn -k eventlet -w 1 API:app
+```
+
+بعد تشغيل الخادم، سيكون متاحًا على العنوان: `http://localhost:5000`
+
+## اختبار الخادم
+
+### 1. اختبار الواجهة الرئيسية
+
+افتح المتصفح وانتقل إلى `http://localhost:5000`، يجب أن ترى صفحة الويب الرئيسية للتطبيق.
+
+### 2. اختبار نقاط النهاية (API Endpoints) باستخدام Postman
+
+يمكنك استخدام [Postman](https://www.postman.com/downloads/) لاختبار نقاط النهاية المختلفة. فيما يلي أمثلة لجميع نقاط النهاية المتاحة في التطبيق:
+
+## أمثلة Postman لجميع نقاط النهاية
+
+### 1. إدارة المستخدمين
+
+#### أ. تسجيل مستخدم جديد:
+- **URL**: `http://localhost:5000/register`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "name": "Test User",
+    "phone_number": "01001234567",
+    "address": "Test Address",
+    "user_type": "user",
+    "password": "password123"
+}
+```
+- **الاستجابة المتوقعة**: رمز الحالة 201 مع رسالة نجاح وتوكن JWT
+
+#### ب. تسجيل الدخول:
+- **URL**: `http://localhost:5000/login`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "phone_number": "01001234567",
+    "password": "password123"
+}
+```
+- **الاستجابة المتوقعة**: رمز الحالة 200 مع رسالة نجاح وتوكن JWT
+
+#### ج. نسيت كلمة المرور:
+- **URL**: `http://localhost:5000/forgot_password`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "phone_number": "01001234567"
+}
+```
+- **الاستجابة المتوقعة**: رمز الحالة 200 مع رسالة تأكيد إرسال رمز OTP
+
+#### د. التحقق من رمز OTP وتعيين كلمة مرور جديدة:
+- **URL**: `http://localhost:5000/verify_otp`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "phone_number": "01001234567",
+    "otp": "123456",
+    "new_password": "newpassword123"
+}
+```
+- **الاستجابة المتوقعة**: رمز الحالة 200 مع رسالة تأكيد تعيين كلمة المرور الجديدة
+
+#### هـ. الوصول إلى مسار محمي:
+- **URL**: `http://localhost:5000/protected`
+- **Method**: GET
+- **Headers**:
+  - Content-Type: application/json
+  - Authorization: [التوكن الذي حصلت عليه من تسجيل الدخول]
+- **الاستجابة المتوقعة**: رمز الحالة 200 مع بيانات المستخدم
+
+### 2. إدارة الإشارات والفيديوهات
+
+#### أ. الحصول على جميع الفيديوهات:
+- **URL**: `http://localhost:5000/get_videos`
+- **Method**: GET
+- **الاستجابة المتوقعة**: رمز الحالة 200 مع قائمة الفيديوهات
+
+#### ب. إضافة فيديو جديد:
+- **URL**: `http://localhost:5000/add_video`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "character_name": "أ",
+    "character_video": "https://media.spreadthesign.com/video/mp4/13/alphabet-letter-594-1.mp4"
+}
+```
+- **الاستجابة المتوقعة**: رمز الحالة 201 مع رسالة تأكيد إضافة الفيديو
+
+#### ج. تحميل صورة إشارة:
+- **URL**: `http://localhost:5000/upload_sign_image`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "name": "إشارة أ",
+    "image": "BASE64_ENCODED_IMAGE"
+}
+```
+- **ملاحظة**: استبدل `BASE64_ENCODED_IMAGE` بصورة مشفرة بتنسيق Base64
+- **الاستجابة المتوقعة**: رمز الحالة 201 مع رسالة تأكيد تحميل الصورة
+
+### 3. التعرف على الإشارات
+
+#### أ. التعرف على إشارة من صورة:
+- **URL**: `http://localhost:5000/detect_sign`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "image": "BASE64_ENCODED_IMAGE",
+    "language": "ar"
+}
+```
+- **ملاحظة**: استبدل `BASE64_ENCODED_IMAGE` بصورة مشفرة بتنسيق Base64
+- **الاستجابة المتوقعة**: رمز الحالة 200 مع الإشارة المكتشفة ورابط الفيديو إن وجد
+
+#### ب. الحصول على صور الإشارات لنص:
+- **URL**: `http://localhost:5000/get_sign_images`
+- **Method**: POST
+- **Headers**: Content-Type: application/json
+- **Body**:
+```json
+{
+    "text": "مرحبا",
+    "language": "ar"
+}
+```
+- **الاستجابة المتوقعة**: رمز الحالة 200 مع قائمة فيديوهات الإشارات المقابلة للنص
+
+### 4. تحويل صورة إلى Base64 في Postman
+
+لتحويل صورة إلى تنسيق Base64 في Postman لاستخدامها في طلبات مثل `detect_sign` أو `upload_sign_image`:
+
+1. في Postman، انتقل إلى علامة التبويب "Body"
+2. اختر "form-data"
+3. أضف حقل "image" واختر نوع "File" ثم اختر الصورة
+4. انقر بزر الماوس الأيمن على الصورة واختر "View as" ثم "Text"
+5. انسخ النص المشفر (بدون "data:image/jpeg;base64,")
+6. استخدم هذا النص في طلبات JSON كقيمة لـ "image"
+
+### 5. استخدام Socket.IO
+
+لاختبار اتصالات Socket.IO، يمكنك استخدام أداة مثل [Socket.IO Tester](https://chrome.google.com/webstore/detail/socketio-tester/cgmimdpepcncnjgclhnhghdooepibakm):
+
+- **URL الاتصال**: `http://localhost:5000`
+- **الحدث للإرسال**: `video_frame`
+- **البيانات للإرسال**:
+```json
+{
+    "frame": "BASE64_ENCODED_IMAGE",
+    "language": "ar"
+}
+```
+- **الحدث للاستماع**: `recognized_text`
+
+## استكشاف الأخطاء وإصلاحها
+
+### 1. مشاكل تثبيت المكتبات
+
+إذا واجهت مشاكل في تثبيت بعض المكتبات، جرب:
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+لتثبيت مكتبة محددة:
+
+```bash
+pip install <اسم_المكتبة>==<الإصدار>
+```
+
+### 2. مشاكل تشغيل الخادم
+
+- تأكد من أن المنفذ 5000 غير مستخدم من قبل تطبيق آخر
+- تحقق من سجلات الخطأ في وحدة التحكم
+
+### 3. مشاكل قاعدة البيانات
+
+إذا واجهت مشاكل في قاعدة البيانات:
+
+```bash
+# احذف ملف قاعدة البيانات الحالي
+del sign_language.db  # على Windows
+rm sign_language.db  # على macOS/Linux
+
+# أعد تشغيل الخادم لإنشاء قاعدة بيانات جديدة
+python API.py
+```
+
+## ملاحظات إضافية
+
+1. **وضع التطوير**: الخادم يعمل في وضع التطوير افتراضيًا، مما يعني أنه سيعرض رسائل الخطأ المفصلة ورموز OTP في السجلات.
+
+2. **تحميل النموذج**: يتم تحميل نموذج التعرف على الإشارات من ملف `model.p`. تأكد من وجود هذا الملف في نفس المجلد مع `API.py`.
+
+3. **مجلدات التحميل**: يتم إنشاء مجلد `static/uploads/videos` تلقائيًا لتخزين ملفات الفيديو المحملة.
+
+4. **الأمان**: في بيئة الإنتاج، يجب تغيير `SECRET_KEY` في ملف `API.py` إلى قيمة عشوائية آمنة.
+
+## المساعدة والدعم
+
+إذا واجهت أي مشاكل أو كان لديك أي استفسارات، يرجى التواصل مع فريق الدعم أو فتح مشكلة في مستودع المشروع.

@@ -50,7 +50,7 @@
             <i class="fas fa-hands"></i> Sign Language API Tester
         </h1>
         <!-- Tabs Navigation -->
-        <div class="flex border-b">
+        <div class="flex flex-wrap border-b">
             <button class="tab-link py-2 px-4 text-lg font-semibold text-gray-700 hover:text-blue-600"
                 onclick="openTab(event, 'register')">
                 <i class="fas fa-user-plus"></i> Register
@@ -71,7 +71,10 @@
                 onclick="openTab(event, 'get-sign-images')">
                 <i class="fas fa-language"></i> Get Sign Images
             </button>
-       
+            <button class="tab-link py-2 px-4 text-lg font-semibold text-gray-700 hover:text-indigo-600"
+                onclick="openTab(event, 'live-detection')">
+                <i class="fas fa-video"></i> Live Detection
+            </button>
         </div>
 
         <!-- Register -->
@@ -97,21 +100,157 @@
             <input id="login-phone" class="w-full p-2 border rounded mb-2" placeholder="Phone Number">
             <input id="login-password" type="password" class="w-full p-2 border rounded mb-2" placeholder="Password">
             <button onclick="loginUser()" class="bg-green-500 text-white p-2 rounded w-full">Login</button>
+            <div class="mt-2 text-center">
+                <a href="#" onclick="showForgotPassword()" class="text-blue-500 hover:underline text-sm">نسيت كلمة المرور؟</a>
+            </div>
             <p id="login-response" class="text-sm text-gray-600 mt-2"></p>
+        </div>
+
+        <!-- قسم نسيت كلمة المرور -->
+        <div id="forgot-password" class="tab-content p-4 hidden">
+            <h2 class="text-xl font-semibold mb-2">استعادة كلمة المرور</h2>
+            <div id="forgot-step-1">
+                <p class="text-sm text-gray-600 mb-4">أدخل رقم هاتفك لاستلام رمز التحقق</p>
+                <input id="forgot-phone" class="w-full p-2 border rounded mb-2" placeholder="رقم الهاتف">
+                <button onclick="sendOTP()" class="bg-blue-500 text-white p-2 rounded w-full">إرسال رمز التحقق</button>
+            </div>
+            <div id="forgot-step-2" class="hidden">
+                <p class="text-sm text-gray-600 mb-4">أدخل رمز التحقق الذي تم إرساله إلى هاتفك</p>
+                <input id="forgot-otp" class="w-full p-2 border rounded mb-2" placeholder="رمز التحقق">
+                <input id="forgot-new-password" type="password" class="w-full p-2 border rounded mb-2" placeholder="كلمة المرور الجديدة">
+                <input id="forgot-confirm-password" type="password" class="w-full p-2 border rounded mb-2" placeholder="تأكيد كلمة المرور الجديدة">
+                <button onclick="verifyOTP()" class="bg-green-500 text-white p-2 rounded w-full">تعيين كلمة المرور الجديدة</button>
+            </div>
+            <div class="mt-4">
+                <a href="#" onclick="openTab(event, 'login')" class="text-blue-500 hover:underline text-sm">العودة إلى تسجيل الدخول</a>
+            </div>
+            <p id="forgot-response" class="text-sm text-gray-600 mt-2"></p>
         </div>
 
         <div id="add-video" class="tab-content p-4 hidden">
             <h2 class="text-xl font-semibold mb-2">Add Sign Video</h2>
-            <input id="video-character" class="w-full p-2 border rounded mb-2" placeholder="Character">
-            <input id="video-url" class="w-full p-2 border rounded mb-2" placeholder="Video URL">
-            <button onclick="addVideo()" class="bg-yellow-500 text-white p-2 rounded w-full">Add Video</button>
-            <p id="video-response" class="text-sm text-gray-600 mt-2"></p>
+
+            <!-- تبويبات لطرق إضافة الفيديو -->
+            <div class="mb-4">
+                <div class="flex border-b">
+                    <button id="url-tab-btn" onclick="switchVideoTab('url-tab')" class="py-2 px-4 font-semibold text-blue-500 border-b-2 border-blue-500">
+                        Add by URL
+                    </button>
+                    <button id="upload-tab-btn" onclick="switchVideoTab('upload-tab')" class="py-2 px-4 font-semibold text-gray-500">
+                        Upload from Device
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم إضافة الفيديو بواسطة الرابط -->
+            <div id="url-tab" class="video-tab">
+                <div class="bg-blue-100 p-3 rounded mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>Note:</strong> For best results, use direct MP4 video links like:
+                        <code class="bg-white p-1 rounded">https://media.spreadthesign.com/video/mp4/13/alphabet-letter-594-1.mp4</code>
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="video-character" class="block text-gray-700 mb-1">Character or Word:</label>
+                    <input id="video-character" class="w-full p-2 border rounded" placeholder="Enter a character (A, B, C) or word">
+                </div>
+
+                <div class="mb-4">
+                    <label for="video-url" class="block text-gray-700 mb-1">Video URL:</label>
+                    <input id="video-url" class="w-full p-2 border rounded" placeholder="Enter direct MP4 video URL">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Quick Examples:</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button onclick="addExampleVideo(videoExamples[0])" class="bg-blue-100 hover:bg-blue-200 text-blue-800 p-2 rounded text-sm transition duration-200">
+                            Letter A
+                        </button>
+                        <button onclick="addExampleVideo(videoExamples[1])" class="bg-blue-100 hover:bg-blue-200 text-blue-800 p-2 rounded text-sm transition duration-200">
+                            Letter B
+                        </button>
+                        <button onclick="addExampleVideo(videoExamples[2])" class="bg-blue-100 hover:bg-blue-200 text-blue-800 p-2 rounded text-sm transition duration-200">
+                            Letter C
+                        </button>
+                        <button onclick="addExampleVideo(videoExamples[3])" class="bg-blue-100 hover:bg-blue-200 text-blue-800 p-2 rounded text-sm transition duration-200">
+                            Word "Hello"
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="addVideo()" class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded w-full transition duration-200">Add Video by URL</button>
+
+                <div class="mt-4 p-3 bg-gray-100 rounded">
+                    <h3 class="font-semibold mb-2">How to find more videos:</h3>
+                    <ol class="list-decimal pl-5 text-sm">
+                        <li>Visit <a href="https://www.spreadthesign.com" target="_blank" class="text-blue-500 underline">SpreadTheSign.com</a></li>
+                        <li>Search for the sign you want</li>
+                        <li>Right-click on the video and select "Copy video address"</li>
+                        <li>Paste the URL here</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- قسم رفع الفيديو من الجهاز -->
+            <div id="upload-tab" class="video-tab hidden">
+                <div class="bg-green-100 p-3 rounded mb-4">
+                    <p class="text-sm text-green-800">
+                        <strong>Upload Video:</strong> Upload a video file from your device. Supported formats: MP4, WebM, MOV, AVI (max 50MB).
+                    </p>
+                </div>
+
+                <form id="upload-video-form" enctype="multipart/form-data" class="mb-4">
+                    <div class="mb-4">
+                        <label for="upload-character-name" class="block text-gray-700 mb-1">Character or Word:</label>
+                        <input id="upload-character-name" name="character_name" class="w-full p-2 border rounded" placeholder="Enter a character (A, B, C) or word" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="upload-video-file" class="block text-gray-700 mb-1">Video File:</label>
+                        <input type="file" id="upload-video-file" name="video" accept=".mp4,.webm,.mov,.avi" class="w-full p-2 border rounded" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <div id="upload-preview" class="hidden">
+                            <p class="text-sm font-semibold mb-2">Preview:</p>
+                            <video id="video-preview" controls class="w-full rounded shadow-sm" style="max-height: 200px;"></video>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="uploadVideo()" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded w-full transition duration-200">
+                        Upload Video
+                    </button>
+                </form>
+
+                <div id="upload-progress" class="hidden mb-4">
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div id="progress-bar" class="bg-blue-500 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p id="progress-text" class="text-sm text-center mt-1">0%</p>
+                </div>
+            </div>
+
+            <div id="video-response" class="text-sm text-gray-600 mt-2"></div>
         </div>
 
         <div id="get-videos" class="tab-content p-4 hidden">
-            <h2 class="text-xl font-semibold mb-2">Get All Videos</h2>
-            <button onclick="getVideos()" class="bg-purple-500 text-white p-2 rounded w-full">Fetch Videos</button>
-            <div id="videos-grid" class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            <h2 class="text-xl font-semibold mb-2">Sign Language Video Library</h2>
+            <div class="bg-purple-100 p-3 rounded mb-4">
+                <p class="text-sm text-purple-800">
+                    <strong>Note:</strong> This library contains videos for sign language characters and words.
+                    Videos are stored with direct links to MP4 files for optimal performance.
+                </p>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="getVideos()" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded transition duration-200">
+                    <i class="fas fa-sync-alt mr-1"></i> Refresh Videos
+                </button>
+                <button onclick="openTab(event, 'add-video')" class="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded transition duration-200">
+                    <i class="fas fa-plus mr-1"></i> Add New Video
+                </button>
+            </div>
+            <div id="videos-grid" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
         </div>
         <div id="get-sign-images" class="tab-content p-4 hidden">
             <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg text-center">
@@ -130,54 +269,151 @@
                 </div>
             </div>
         </div>
-      
+        <div class="tab-content p-4">
+            <h2 class="text-xl font-bold mb-4">Upload Sign Image</h2>
+            <input id="sign-name" class="w-full p-2 border rounded mb-2" placeholder="Enter Sign Name">
+            <input type="file" id="sign-image" accept="image/jpeg" class="w-full p-2 border rounded mb-2">
+            <button onclick="uploadSignImage()" class="btn-animated bg-blue-500 text-white p-2 rounded w-full">
+                Upload Image
+            </button>
+            <p id="upload-response" class="text-sm text-gray-600 mt-2"></p>
+        </div>
+
+
+
+        <div id="live-detection" class="tab-content p-4 hidden">
+            <h2 class="text-xl font-bold mb-4">Live Sign Detection</h2>
+
+            <!-- تبويبات لطرق التعرف على الإشارات -->
+            <div class="mb-4">
+                <div class="flex border-b">
+                    <button id="stream-tab-btn" onclick="switchDetectionTab('stream-tab')" class="py-2 px-4 font-semibold text-blue-500 border-b-2 border-blue-500">
+                        Continuous Detection
+                    </button>
+                    <button id="capture-tab-btn" onclick="switchDetectionTab('capture-tab')" class="py-2 px-4 font-semibold text-gray-500">
+                        Capture & Detect
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم التعرف المستمر -->
+            <div id="stream-tab" class="detection-tab">
+                <div class="bg-blue-100 p-3 rounded mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>Continuous Detection:</strong> The camera will continuously detect sign language gestures.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="detection-language" class="block text-gray-700 mb-1">Select Language:</label>
+                    <select id="detection-language" class="w-full p-2 border rounded">
+                        <option value="ar">Arabic</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <video id="camera" autoplay class="w-full rounded shadow-md"></video>
+                <p id="recognized-text" class="text-xl font-semibold text-gray-700 mt-4"></p>
+
+                <div id="sentence-builder" class="mt-4 p-2 border rounded bg-gray-100">
+                    <p class="font-bold">Current Sentence:</p>
+                    <p id="current-sentence" class="text-lg"></p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <button onclick="startVideoStream()" class="btn-animated bg-blue-500 hover:bg-blue-600 text-white p-2 rounded w-full">
+                        <i class="fas fa-play"></i> Start Detection
+                    </button>
+                    <button onclick="stopVideoStream()" class="btn-animated bg-red-500 hover:bg-red-600 text-white p-2 rounded w-full">
+                        <i class="fas fa-stop"></i> Stop Detection
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <button onclick="addToSentence()" class="btn-animated bg-green-500 hover:bg-green-600 text-white p-2 rounded w-full">
+                        <i class="fas fa-plus"></i> Add to Sentence
+                    </button>
+                    <button onclick="clearSentence()" class="btn-animated bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded w-full">
+                        <i class="fas fa-trash"></i> Clear Sentence
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم التقاط وتحليل الصورة -->
+            <div id="capture-tab" class="detection-tab hidden">
+                <div class="bg-green-100 p-3 rounded mb-4">
+                    <p class="text-sm text-green-800">
+                        <strong>Capture & Detect:</strong> Take a snapshot or upload an image to analyze the sign language gesture.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="capture-language" class="block text-gray-700 mb-1">Select Language:</label>
+                    <select id="capture-language" class="w-full p-2 border rounded">
+                        <option value="ar">Arabic</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <!-- تبويبات لطرق التقاط الصورة -->
+                <div class="mb-4">
+                    <div class="flex border-b">
+                        <button id="capture-camera-tab-btn" onclick="switchCaptureTab('camera-tab')" class="py-2 px-4 font-semibold text-blue-500 border-b-2 border-blue-500">
+                            Use Camera
+                        </button>
+                        <button id="capture-upload-tab-btn" onclick="switchCaptureTab('upload-image-tab')" class="py-2 px-4 font-semibold text-gray-500">
+                            Upload Image
+                        </button>
+                    </div>
+                </div>
+
+                <!-- قسم استخدام الكاميرا -->
+                <div id="camera-tab" class="capture-method-tab">
+                    <video id="capture-camera" autoplay class="w-full rounded shadow-md"></video>
+
+                    <button onclick="captureImage()" class="btn-animated bg-green-500 hover:bg-green-600 text-white p-2 rounded w-full mt-4">
+                        <i class="fas fa-camera"></i> Capture & Analyze
+                    </button>
+                </div>
+
+                <!-- قسم تحميل الصورة -->
+                <div id="upload-image-tab" class="capture-method-tab hidden">
+                    <div class="mb-4">
+                        <label for="upload-sign-image" class="block text-gray-700 mb-1">Upload Image:</label>
+                        <input type="file" id="upload-sign-image" accept="image/jpeg,image/png" class="w-full p-2 border rounded">
+                    </div>
+
+                    <div class="mb-4">
+                        <div id="upload-sign-preview" class="hidden">
+                            <p class="text-sm font-semibold mb-2">Preview:</p>
+                            <img id="upload-sign-image-preview" class="w-full max-h-64 object-contain rounded shadow-sm">
+                        </div>
+                    </div>
+
+                    <button onclick="analyzeUploadedImage()" class="btn-animated bg-blue-500 hover:bg-blue-600 text-white p-2 rounded w-full">
+                        <i class="fas fa-search"></i> Analyze Image
+                    </button>
+                </div>
+
+                <div id="capture-result" class="mt-4 hidden">
+                    <div class="p-4 bg-gray-100 rounded">
+                        <h3 class="font-bold text-lg mb-2" id="capture-result-title">Analysis Result</h3>
+                        <p id="capture-response" class="text-gray-700"></p>
+
+                        <div id="capture-video-container" class="mt-4 hidden">
+                            <p class="font-semibold mb-2">Sign Video:</p>
+                            <video id="capture-video" controls class="w-full rounded shadow-sm" style="max-height: 200px;"></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
     <script>
-         let socket;
-    let video = document.getElementById('videoElement');
-
-    function connectSocket() {
-        socket = io.connect('http://127.0.0.1:5000');
-
-        // ✅ Receive recognized text from server
-        socket.on('recognized_text', function (data) {
-            document.getElementById("recognized-text").innerText = "Recognized Sign: " + data.text;
-        });
-    }
-
-    async function startVideoCall() {
-        try {
-            document.getElementById("recognized-text").innerText = "Starting Video...";
-            if (!socket) {
-                connectSocket();
-            }
-
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-            video.srcObject = stream;
-
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-
-            setInterval(() => {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                canvas.toBlob(blob => {
-                    if (socket) {
-                        socket.emit('video_frame', blob);
-                    }
-                }, 'image/jpeg');
-            }, 500);  // Send frames every 500ms
-
-        } catch (error) {
-            console.error("Error accessing camera:", error);
-            alert("Please allow camera permissions.");
-        }
-    }
-
-
+        // استخدم الاتصال بالسوكت من ملف script.js
 
         // --------------------------------------------
         let videoQueue = [];
@@ -185,23 +421,32 @@
 
         async function getSignImages() {
             const textInput = document.getElementById("sign-text").value;
-            const language = document.getElementById("sign-language").value; // الحصول على اللغة المحددة
+            const language = document.getElementById("sign-language").value;
 
-            const response = await fetch('/get_sign_images', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: textInput, language: language }) // إرسال النص واللغة
-            });
+            try {
+                const response = await fetch('/get_sign_images', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: textInput, language: language })
+                });
 
-            const data = await response.json();
-            videoQueue = data.sign_videos;
-            currentIndex = 0;
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-            if (videoQueue.length > 0) {
-                displaySentence(textInput);
-                playNextVideo();
-            } else {
-                alert("No videos found for the entered text.");
+                const data = await response.json();
+                videoQueue = data.sign_videos;
+                currentIndex = 0;
+
+                if (videoQueue.length > 0) {
+                    displaySentence(textInput);
+                    playNextVideo();
+                } else {
+                    alert("No videos found for the entered text.");
+                }
+            } catch (error) {
+                console.error("Error fetching sign images:", error);
+                alert("An error occurred while fetching sign images.");
             }
         }
 
@@ -289,27 +534,338 @@
         }
 
         async function loginUser() {
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    phone_number: document.getElementById('login-phone').value,
-                    password: document.getElementById('login-password').value
-                })
-            });
-            document.getElementById('login-response').textContent = await response.text();
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone_number: document.getElementById('login-phone').value,
+                        password: document.getElementById('login-password').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('login-response').innerHTML = `<span class="text-green-500">${data.message}</span>`;
+                    // يمكنك تخزين التوكن في localStorage إذا كنت تريد
+                    // localStorage.setItem('token', data.token);
+                } else {
+                    document.getElementById('login-response').innerHTML = `<span class="text-red-500">${data.error}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('login-response').innerHTML = `<span class="text-red-500">خطأ في الاتصال: ${error.message}</span>`;
+            }
+        }
+
+        function showForgotPassword() {
+            openTab(null, 'forgot-password');
+            document.getElementById('forgot-step-1').classList.remove('hidden');
+            document.getElementById('forgot-step-2').classList.add('hidden');
+            document.getElementById('forgot-response').textContent = '';
+        }
+
+        async function sendOTP() {
+            const phoneNumber = document.getElementById('forgot-phone').value;
+
+            if (!phoneNumber) {
+                document.getElementById('forgot-response').innerHTML = '<span class="text-red-500">الرجاء إدخال رقم الهاتف</span>';
+                return;
+            }
+
+            try {
+                document.getElementById('forgot-response').innerHTML = '<span class="text-blue-500">جاري إرسال رمز التحقق...</span>';
+
+                const response = await fetch('/forgot_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone_number: phoneNumber })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('forgot-response').innerHTML = `<span class="text-green-500">${data.message}</span>`;
+                    // الانتقال إلى الخطوة الثانية
+                    document.getElementById('forgot-step-1').classList.add('hidden');
+                    document.getElementById('forgot-step-2').classList.remove('hidden');
+                } else {
+                    document.getElementById('forgot-response').innerHTML = `<span class="text-red-500">${data.error}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('forgot-response').innerHTML = `<span class="text-red-500">خطأ في الاتصال: ${error.message}</span>`;
+            }
+        }
+
+        async function verifyOTP() {
+            const phoneNumber = document.getElementById('forgot-phone').value;
+            const otp = document.getElementById('forgot-otp').value;
+            const newPassword = document.getElementById('forgot-new-password').value;
+            const confirmPassword = document.getElementById('forgot-confirm-password').value;
+
+            // التحقق من إدخال جميع الحقول
+            if (!phoneNumber || !otp || !newPassword || !confirmPassword) {
+                document.getElementById('forgot-response').innerHTML = '<span class="text-red-500">الرجاء إدخال جميع الحقول</span>';
+                return;
+            }
+
+            // التحقق من تطابق كلمتي المرور
+            if (newPassword !== confirmPassword) {
+                document.getElementById('forgot-response').innerHTML = '<span class="text-red-500">كلمتا المرور غير متطابقتين</span>';
+                return;
+            }
+
+            try {
+                document.getElementById('forgot-response').innerHTML = '<span class="text-blue-500">جاري التحقق من الرمز...</span>';
+
+                const response = await fetch('/verify_otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone_number: phoneNumber,
+                        otp: otp,
+                        new_password: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('forgot-response').innerHTML = `<span class="text-green-500">${data.message}</span>`;
+                    // إضافة زر للعودة إلى صفحة تسجيل الدخول
+                    document.getElementById('forgot-response').innerHTML += `
+                        <div class="mt-2">
+                            <button onclick="openTab(event, 'login')" class="bg-blue-500 text-white p-1 rounded text-sm">
+                                العودة إلى تسجيل الدخول
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('forgot-response').innerHTML = `<span class="text-red-500">${data.error}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('forgot-response').innerHTML = `<span class="text-red-500">خطأ في الاتصال: ${error.message}</span>`;
+            }
         }
 
         async function addVideo() {
-            const response = await fetch('/add_video', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    character_name: document.getElementById('video-character').value,
-                    character_video: document.getElementById('video-url').value
-                })
+            const characterInput = document.getElementById('video-character');
+            const videoUrlInput = document.getElementById('video-url');
+            const responseElement = document.getElementById('video-response');
+
+            // التحقق من وجود المدخلات
+            if (!characterInput.value || !videoUrlInput.value) {
+                responseElement.innerHTML = '<span class="text-red-500">Please enter both character/word and video URL</span>';
+                return;
+            }
+
+            // التحقق من صحة رابط الفيديو
+            const videoUrl = videoUrlInput.value.trim();
+            if (!videoUrl.includes('http')) {
+                responseElement.innerHTML = '<span class="text-red-500">Please enter a valid URL starting with http:// or https://</span>';
+                return;
+            }
+
+            try {
+                responseElement.innerHTML = '<span class="text-blue-500">Adding video, please wait...</span>';
+
+                const response = await fetch('/add_video', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        character_name: characterInput.value.trim(),
+                        character_video: videoUrl
+                    })
+                });
+
+                const result = await response.text();
+
+                if (response.ok) {
+                    responseElement.innerHTML = `<span class="text-green-500">${result}</span>`;
+                    // مسح الحقول بعد الإضافة الناجحة
+                    characterInput.value = '';
+                    videoUrlInput.value = '';
+
+                    // إضافة زر للانتقال إلى عرض الفيديوهات
+                    responseElement.innerHTML += `
+                        <div class="mt-2">
+                            <button onclick="openTab(event, 'get-videos'); getVideos();" class="bg-purple-500 text-white p-1 rounded text-sm">
+                                View All Videos
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    responseElement.innerHTML = `<span class="text-red-500">Error: ${result}</span>`;
+                }
+            } catch (error) {
+                console.error("Error adding video:", error);
+                responseElement.innerHTML = `<span class="text-red-500">Error: ${error.message}</span>`;
+            }
+        }
+
+        // أمثلة لروابط الفيديو
+        const videoExamples = [
+            { char: "A", url: "https://media.spreadthesign.com/video/mp4/13/alphabet-letter-594-1.mp4" },
+            { char: "B", url: "https://media.spreadthesign.com/video/mp4/13/alphabet-letter-595-1.mp4" },
+            { char: "C", url: "https://media.spreadthesign.com/video/mp4/13/alphabet-letter-596-1.mp4" },
+            { char: "Hello", url: "https://media.spreadthesign.com/video/mp4/13/117992.mp4" }
+        ];
+
+        // وظيفة لإضافة مثال فيديو
+        function addExampleVideo(example) {
+            document.getElementById('video-character').value = example.char;
+            document.getElementById('video-url').value = example.url;
+        }
+
+        // وظيفة للتبديل بين تبويبات إضافة الفيديو
+        function switchVideoTab(tabId) {
+            // إخفاء جميع التبويبات
+            document.querySelectorAll('.video-tab').forEach(tab => {
+                tab.classList.add('hidden');
             });
-            document.getElementById('video-response').textContent = await response.text();
+
+            // إظهار التبويب المحدد
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // تحديث أزرار التبويب
+            document.getElementById('url-tab-btn').classList.remove('text-blue-500', 'border-blue-500');
+            document.getElementById('url-tab-btn').classList.add('text-gray-500');
+            document.getElementById('upload-tab-btn').classList.remove('text-blue-500', 'border-blue-500');
+            document.getElementById('upload-tab-btn').classList.add('text-gray-500');
+
+            if (tabId === 'url-tab') {
+                document.getElementById('url-tab-btn').classList.remove('text-gray-500');
+                document.getElementById('url-tab-btn').classList.add('text-blue-500', 'border-blue-500');
+            } else {
+                document.getElementById('upload-tab-btn').classList.remove('text-gray-500');
+                document.getElementById('upload-tab-btn').classList.add('text-blue-500', 'border-blue-500');
+            }
+        }
+
+        // وظيفة لعرض معاينة الفيديو قبل الرفع
+        document.getElementById('upload-video-file').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const videoURL = URL.createObjectURL(file);
+                const videoPreview = document.getElementById('video-preview');
+                videoPreview.src = videoURL;
+                document.getElementById('upload-preview').classList.remove('hidden');
+
+                // عرض معلومات الملف
+                const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const fileInfo = document.createElement('p');
+                fileInfo.className = 'text-xs text-gray-500 mt-1';
+                fileInfo.textContent = `File: ${file.name} (${fileSizeMB} MB)`;
+
+                const previewContainer = document.getElementById('upload-preview');
+                // إزالة معلومات الملف السابقة إن وجدت
+                const oldFileInfo = previewContainer.querySelector('.text-xs');
+                if (oldFileInfo) {
+                    previewContainer.removeChild(oldFileInfo);
+                }
+                previewContainer.appendChild(fileInfo);
+            }
+        });
+
+        // وظيفة لرفع الفيديو
+        async function uploadVideo() {
+            const characterName = document.getElementById('upload-character-name').value;
+            const videoFile = document.getElementById('upload-video-file').files[0];
+            const responseElement = document.getElementById('video-response');
+
+            // التحقق من وجود المدخلات
+            if (!characterName || !videoFile) {
+                responseElement.innerHTML = '<span class="text-red-500">Please enter character/word and select a video file</span>';
+                return;
+            }
+
+            // التحقق من حجم الملف (الحد الأقصى 50 ميجابايت)
+            const maxSize = 50 * 1024 * 1024; // 50 MB
+            if (videoFile.size > maxSize) {
+                responseElement.innerHTML = '<span class="text-red-500">File size exceeds the maximum limit (50MB)</span>';
+                return;
+            }
+
+            try {
+                // إظهار شريط التقدم
+                document.getElementById('upload-progress').classList.remove('hidden');
+                responseElement.innerHTML = '<span class="text-blue-500">Uploading video, please wait...</span>';
+
+                // إنشاء كائن FormData
+                const formData = new FormData();
+                formData.append('character_name', characterName);
+                formData.append('video', videoFile);
+
+                // إنشاء طلب XMLHttpRequest لتتبع تقدم الرفع
+                const xhr = new XMLHttpRequest();
+
+                // تتبع تقدم الرفع
+                xhr.upload.addEventListener('progress', function(event) {
+                    if (event.lengthComputable) {
+                        const percentComplete = Math.round((event.loaded / event.total) * 100);
+                        document.getElementById('progress-bar').style.width = percentComplete + '%';
+                        document.getElementById('progress-text').textContent = percentComplete + '%';
+                    }
+                });
+
+                // عند اكتمال الرفع
+                xhr.addEventListener('load', function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        const response = JSON.parse(xhr.responseText);
+                        responseElement.innerHTML = `<span class="text-green-500">Video uploaded successfully!</span>`;
+
+                        // عرض معلومات الفيديو المرفوع
+                        const videoInfo = document.createElement('div');
+                        videoInfo.className = 'mt-2 p-3 bg-green-50 rounded';
+                        videoInfo.innerHTML = `
+                            <p class="font-semibold">Video Details:</p>
+                            <p>Character/Word: ${response.character_name}</p>
+                            <p>Video URL: <a href="${response.video_url}" target="_blank" class="text-blue-500 underline">${response.video_url}</a></p>
+                            <p>File Size: ${(response.file_size / (1024 * 1024)).toFixed(2)} MB</p>
+                            <div class="mt-2">
+                                <button onclick="openTab(event, 'get-videos'); getVideos();" class="bg-purple-500 text-white p-1 rounded text-sm">
+                                    View All Videos
+                                </button>
+                            </div>
+                        `;
+                        responseElement.appendChild(videoInfo);
+
+                        // مسح النموذج
+                        document.getElementById('upload-character-name').value = '';
+                        document.getElementById('upload-video-file').value = '';
+                        document.getElementById('upload-preview').classList.add('hidden');
+
+                        // إخفاء شريط التقدم بعد فترة قصيرة
+                        setTimeout(() => {
+                            document.getElementById('upload-progress').classList.add('hidden');
+                        }, 2000);
+                    } else {
+                        let errorMessage = 'Upload failed';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMessage = response.error || errorMessage;
+                        } catch (e) {}
+
+                        responseElement.innerHTML = `<span class="text-red-500">Error: ${errorMessage}</span>`;
+                        document.getElementById('upload-progress').classList.add('hidden');
+                    }
+                });
+
+                // في حالة حدوث خطأ
+                xhr.addEventListener('error', function() {
+                    responseElement.innerHTML = '<span class="text-red-500">Network error occurred during upload</span>';
+                    document.getElementById('upload-progress').classList.add('hidden');
+                });
+
+                // إرسال الطلب
+                xhr.open('POST', '/upload_video');
+                xhr.send(formData);
+
+            } catch (error) {
+                console.error("Error uploading video:", error);
+                responseElement.innerHTML = `<span class="text-red-500">Error: ${error.message}</span>`;
+                document.getElementById('upload-progress').classList.add('hidden');
+            }
         }
         // async function getSignImages() {
         //     const response = await fetch('/get_sign_images', {
@@ -321,55 +877,117 @@
         //     document.getElementById('sign-images').textContent = JSON.stringify(data, null, 2);
         // }
       async function getVideos() {
-            const response = await fetch('/get_videos');
-            const data = await response.json();
-            const videosGrid = document.getElementById('videos-grid');
-            videosGrid.innerHTML = ""; // Clear previous videos
+            try {
+                const response = await fetch('/get_videos');
+                const data = await response.json();
+                const videosGrid = document.getElementById('videos-grid');
+                videosGrid.innerHTML = ""; // Clear previous videos
 
-            data.videos.forEach(video => {
-                const videoCard = document.createElement('div');
-                videoCard.className = "p-4 bg-white shadow-md rounded-lg text-center";
+                // إضافة عنوان وعدد الفيديوهات
+                const headerDiv = document.createElement('div');
+                headerDiv.className = "col-span-full mb-4 p-2 bg-gray-100 rounded";
+                headerDiv.innerHTML = `<h3 class="text-lg font-bold">Found ${data.videos.length} videos</h3>`;
+                videosGrid.appendChild(headerDiv);
 
-                const characterText = document.createElement('p');
-                characterText.className = "text-xl font-bold mb-2";
-                characterText.textContent = video[1]; // Video title or description
-
-                const videoElement = document.createElement('div'); // Use a div to conditionally load video elements
-
-                // Check if the video is from YouTube
-                if (video[2].includes('youtube.com')) {
-                    const videoId = getYouTubeVideoId(video[2]); // Get video ID from URL
-                    const iframe = document.createElement('iframe');
-                    iframe.src = `https://www.youtube.com/embed/${videoId}`;
-                    iframe.width = '100%';
-                    iframe.height = '315';
-                    iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
-                    iframe.setAttribute('allowfullscreen', true);
-                    videoElement.appendChild(iframe);
-                }
-                // Check if the video is from Google Drive
-                else if (video[2].includes('drive.google.com')) {
-                    const fileId = getGoogleDriveFileId(video[2]); // Extract the file ID from the Google Drive link
-                    const iframe = document.createElement('iframe');
-                    iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
-                    iframe.width = '100%';
-                    iframe.height = '315';
-                    iframe.setAttribute('frameborder', '0');
-                    videoElement.appendChild(iframe);
-                }
-                // If it's a direct MP4 link
-                else if (video[2].endsWith('.mp4')) {
-                    const videoElementPlayer = document.createElement('video');
-                    videoElementPlayer.src = video[2];
-                    videoElementPlayer.controls = true;
-                    videoElementPlayer.className = "w-full rounded-md shadow-sm";
-                    videoElement.appendChild(videoElementPlayer);
+                // إذا لم تكن هناك فيديوهات، أظهر رسالة
+                if (data.videos.length === 0) {
+                    const noVideosDiv = document.createElement('div');
+                    noVideosDiv.className = "col-span-full p-4 bg-yellow-100 rounded text-center";
+                    noVideosDiv.innerHTML = `
+                        <p class="text-yellow-800">No videos found. Add some videos first!</p>
+                        <button onclick="openTab(event, 'add-video')" class="mt-2 bg-blue-500 text-white p-2 rounded">
+                            Add Videos
+                        </button>
+                    `;
+                    videosGrid.appendChild(noVideosDiv);
+                    return;
                 }
 
-                videoCard.appendChild(characterText);
-                videoCard.appendChild(videoElement);
-                videosGrid.appendChild(videoCard);
-            });
+                // عرض الفيديوهات
+                data.videos.forEach(video => {
+                    const videoCard = document.createElement('div');
+                    videoCard.className = "p-4 bg-white shadow-md rounded-lg text-center";
+
+                    const characterText = document.createElement('p');
+                    characterText.className = "text-xl font-bold mb-2";
+                    characterText.textContent = video[1]; // اسم الحرف أو الكلمة
+
+                    const videoUrl = video[2]; // رابط الفيديو
+                    const videoElement = document.createElement('div');
+
+                    // إذا كان رابط مباشر لملف MP4
+                    if (videoUrl.endsWith('.mp4') || videoUrl.includes('spreadthesign.com')) {
+                        const videoPlayer = document.createElement('video');
+                        videoPlayer.src = videoUrl;
+                        videoPlayer.controls = true;
+                        videoPlayer.autoplay = false;
+                        videoPlayer.loop = true;
+                        videoPlayer.muted = true;
+                        videoPlayer.className = "w-full rounded-md shadow-sm";
+                        videoPlayer.style.maxHeight = "200px";
+                        videoElement.appendChild(videoPlayer);
+
+                        // إضافة زر لتشغيل/إيقاف الفيديو
+                        const playButton = document.createElement('button');
+                        playButton.className = "mt-2 bg-blue-500 text-white p-1 rounded text-sm";
+                        playButton.textContent = "Play/Pause";
+                        playButton.onclick = function() {
+                            if (videoPlayer.paused) {
+                                videoPlayer.play();
+                            } else {
+                                videoPlayer.pause();
+                            }
+                        };
+                        videoElement.appendChild(playButton);
+                    }
+                    // إذا كان من يوتيوب
+                    else if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+                        const videoId = getYouTubeVideoId(videoUrl);
+                        const iframe = document.createElement('iframe');
+                        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                        iframe.width = '100%';
+                        iframe.height = '200';
+                        iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+                        iframe.setAttribute('allowfullscreen', true);
+                        videoElement.appendChild(iframe);
+                    }
+                    // إذا كان من جوجل درايف
+                    else if (videoUrl.includes('drive.google.com')) {
+                        const fileId = getGoogleDriveFileId(videoUrl);
+                        const iframe = document.createElement('iframe');
+                        iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
+                        iframe.width = '100%';
+                        iframe.height = '200';
+                        iframe.setAttribute('frameborder', '0');
+                        videoElement.appendChild(iframe);
+                    }
+                    // إذا كان رابط غير معروف
+                    else {
+                        const linkElement = document.createElement('a');
+                        linkElement.href = videoUrl;
+                        linkElement.target = "_blank";
+                        linkElement.className = "text-blue-500 underline";
+                        linkElement.textContent = "Open Video Link";
+                        videoElement.appendChild(linkElement);
+                    }
+
+                    // إضافة معلومات الفيديو
+                    const videoInfo = document.createElement('div');
+                    videoInfo.className = "mt-2 text-xs text-gray-500";
+                    videoInfo.textContent = `Video ID: ${video[0]}`;
+
+                    videoCard.appendChild(characterText);
+                    videoCard.appendChild(videoElement);
+                    videoCard.appendChild(videoInfo);
+                    videosGrid.appendChild(videoCard);
+                });
+            } catch (error) {
+                console.error("Error fetching videos:", error);
+                const videosGrid = document.getElementById('videos-grid');
+                videosGrid.innerHTML = `<div class="col-span-full p-4 bg-red-100 rounded text-center">
+                    <p class="text-red-800">Error loading videos: ${error.message}</p>
+                </div>`;
+            }
         }
 
         // Helper function to extract YouTube video ID from a URL
@@ -386,7 +1004,22 @@
             return match && match[1] ? match[1] : null;
         }
 
+        const video = document.getElementById("camera");
+        const result = document.getElementById("result");
+
+        // الوصول إلى الكاميرا
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error("Error accessing camera:", error);
+                alert("Please allow camera permissions.");
+            });
+
+
     </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>

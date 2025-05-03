@@ -4,96 +4,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Call and Gesture Recognition</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>API Test Page</title>e Recognition</title>
+    <script src="https://cdn.tailwindcss.com"></script>s@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>ns.min.css" rel="stylesheet">
     <style>
-        #videoContainer {
-            width: 80%;
-            margin: 0 auto;
-        }
-
-        #canvas {
-            width: 100%;
-            height: auto;
-        }
-
-        #userList {
-            max-height: 400px;
-            overflow-y: auto;
+    <style>deoContainer {
+        .highlight {0%;
+            color: red;uto;
+            font-weight: bold;
+            transition: color 0.3s ease-in-out;
+        }canvas {
+    </style>width: 100%;
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        .highlight {
+            color: red;
+            font-weight: bold;
+            transition: color 0.3s ease-in-out;
         }
     </style>
-</head>
-
-<body class="bg-gray-100">
+        .tab-link {
+            transition: all 0.3s ease-in-out;
+        }ss="bg-gray-100">
     <nav style="background-color: #86D198;" class="bg-blue-500 text-white p-4 flex justify-between items-center">
+        .tab-link:hover {
+            transform: scale(1.05);text-xl font-semibold"><i class="bi bi-house-fill"></i> Home</a>
+        }/div>
         <div>
-            <a href="/Home" class="text-xl font-semibold"><i class="bi bi-house-fill"></i> Home</a>
-        </div>
-        <div>
-            <span class="mr-4">Logged in as <strong id="loggedInUserName"></strong> <i class="bi bi-person-fill"></i></span>
-            <button onclick="logout()" class="text-white hover:text-gray-200 focus:outline-none focus:text-gray-200">
-                <i class="bi bi-box-arrow-right"></i> Log Out
+        .btn-animated {="mr-4">Logged in as <strong id="loggedInUserName"></strong> <i class="bi bi-person-fill"></i></span>
+            transition: transform 0.2s ease-in-out;white hover:text-gray-200 focus:outline-none focus:text-gray-200">
+        }       <i class="bi bi-box-arrow-right"></i> Log Out
             </button>
-        </div>
-    </nav>
-
-    <div class="container mx-auto mt-10">
-        <div class="flex">
-            <div class="w-1/4 bg-white p-4 rounded-lg shadow-md animate__animated animate__fadeInLeft">
-                <h2 class="text-2xl font-semibold mb-4">Users</h2>
-                <ul id="userList"></ul>
-            </div>
-            <div id="videoContainer" class="w-3/4 ml-4 bg-gray-200 rounded-lg p-4 mb-6 animate__animated animate__fadeInRight">
-                <img id="videoFeed" class="rounded-lg">
-                <div id="prediction" class="text-xl text-red-500 mt-2">Prediction: <span id="predictedText"></span></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        var loggedInUser = localStorage.getItem('loggedInUser');
-        var userList = JSON.parse(localStorage.getItem('users')) || [];
-
-        if (!loggedInUser) {
-            window.location.href = 'login.html';
+        .btn-animated:hover {
+            transform: translateY(-3px);
         }
+    </style>ss="container mx-auto mt-10">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+            <div class="w-1/4 bg-white p-4 rounded-lg shadow-md animate__animated animate__fadeInLeft">
+</head>         <h2 class="text-2xl font-semibold mb-4">Users</h2>
+                <ul id="userList"></ul>
+<body class="bg-gray-100 text-gray-900">
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">lg p-4 mb-6 animate__animated animate__fadeInRight">
+        <h1 class="text-3xl font-bold text-center mb-6">
+            <i class="fas fa-hands"></i> Sign Language API Testermt-2">Prediction: <span id="predictedText"></span></div>
+        </h1>/div>
+        <!-- Tabs Navigation -->
+        <div class="flex border-b">
+            <button class="tab-link py-2 px-4 text-lg font-semibold text-gray-700 hover:text-blue-600"
+                onclick="openTab(event, 'register')">
+                <i class="fas fa-user-plus"></i> RegisterUser');
+            </button>= JSON.parse(localStorage.getItem('users')) || [];
+            <button class="tab-link py-2 px-4 text-lg font-semibold text-gray-700 hover:text-green-600"
+                onclick="openTab(event, 'login')">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <button class="tab-link py-2 px-4 text-lg font-semibold text-gray-700 hover:text-yellow-600"
+                onclick="openTab(event, 'add-video')">
+                <i class="fas fa-video"></i> Add VideoyId('userList');
+            </button>lement.innerHTML = '';
+            <button class="tab-link py-2 px-4 text-lg font-semibold text-gray-700 hover:text-purple-600"
+                onclick="openTab(event, 'get-videos')">
+                <i class="fas fa-play-circle"></i> Get Videos
+            </button>i.textContent = user.username;
+            <button class="tab-link py-2 px-4 text-lg font-semibold text-gray-700 hover:text-red-600"
+                onclick="openTab(event, 'get-sign-images')">l(user.username); };
+                <i class="fas fa-language"></i> Get Sign Images
+            </button>
+            });
+        </div>
 
-        function populateUserList() {
-            var userListElement = document.getElementById('userList');
-            userListElement.innerHTML = '';
-            userList.forEach(function (user) {
-                if (user.username !== loggedInUser) {
-                    var li = document.createElement('li');
-                    li.textContent = user.username;
-                    li.classList.add('py-2', 'hover:bg-gray-100', 'cursor-pointer');
-                    li.onclick = function () { startVideoCall(user.username); };
-                    userListElement.appendChild(li);
+        <!-- Register -->eoCall(username) {
+        <div id="register" class="tab-content p-4">deoFeed');
+            <h2 class="text-2xl font-bold mb-4"><i class="fas fa-user"></i> User Registration</h2>
+            <input id="register-name" class="w-full p-2 border rounded mb-2" placeholder="Name">
+            <input id="register-phone" class="w-full p-2 border rounded mb-2" placeholder="Phone Number">
+            <input id="register-address" class="w-full p-2 border rounded mb-2" placeholder="Address">
+            <select id="register-type" class="w-full p-2 border rounded mb-2">
+                <option value="normal_user">Normal</option>
+                <option value="disabled_user">Disabled User</option>
+            </select>
+            <input id="register-password" type="password" class="w-full p-2 border rounded mb-2" placeholder="Password">
+            <button id="register-button" onclick="registerUser()"
+                class="btn-animated bg-blue-500 text-white p-2 rounded w-full">
+                <i class="fas fa-user-plus"></i> Register
+            </button>ntListener('message', function (event) {
+            <p id="register-response" class="text-sm text-gray-600 mt-2"></p>
+        </div>r predictedCharacter = data.trim(); // Remove whitespace
+            document.getElementById('predictedText').textContent = 'Prediction: ' + predictedCharacter;
+        <div id="login" class="tab-content p-4 hidden">
+            <h2 class="text-xl font-semibold mb-2">Login</h2>
+            <input id="login-phone" class="w-full p-2 border rounded mb-2" placeholder="Phone Number">
+            <input id="login-password" type="password" class="w-full p-2 border rounded mb-2" placeholder="Password">
+            <button onclick="loginUser()" class="bg-green-500 text-white p-2 rounded w-full">Login</button>
+            <p id="login-response" class="text-sm text-gray-600 mt-2"></p>        </div>        <div id="add-video" class="tab-content p-4 hidden">            <h2 class="text-xl font-semibold mb-2">Add Sign Video</h2>            <input id="video-character" class="w-full p-2 border rounded mb-2" placeholder="Character">            <input id="video-url" class="w-full p-2 border rounded mb-2" placeholder="Video URL">            <button onclick="addVideo()" class="bg-yellow-500 text-white p-2 rounded w-full">Add Video</button>            <p id="video-response" class="text-sm text-gray-600 mt-2"></p>        </div>        <div id="get-videos" class="tab-content p-4 hidden">            <h2 class="text-xl font-semibold mb-2">Get All Videos</h2>            <button onclick="getVideos()" class="bg-purple-500 text-white p-2 rounded w-full">Fetch Videos</button>            <div id="videos-grid" class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>        </div>        <div id="get-sign-images" class="tab-content p-4 hidden">            <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg text-center">                <h1 class="text-2xl font-bold mb-4"><i class="fas fa-language"></i> Sign Language Sentence Player</h1>                <input id="sign-text" class="w-full p-2 border rounded mb-2" placeholder="Enter Text">                <select id="sign-language" class="w-full p-2 border rounded mb-2">                    <option value="ar">Arabic</option>                    <option value="en">English</option>                </select>                <button onclick="getSignImages()" class="btn-animated bg-blue-500 text-white p-2 rounded w-full">                    <i class="fas fa-play"></i> Play Sentence                </button>                <div id="video-container" class="mt-4">                    <p id="sentence-display" class="text-2xl font-semibold text-gray-700"></p>                    <video id="sign-video" class="w-full rounded shadow-md mt-2 hidden" controls></video>                </div>            </div>        </div>        <div class="tab-content p-4">            <h2 class="text-xl font-bold mb-4">Upload Sign Image</h2>            <input id="sign-name" class="w-full p-2 border rounded mb-2" placeholder="Enter Sign Name">            <input type="file" id="sign-image" accept="image/jpeg" class="w-full p-2 border rounded mb-2">            <button onclick="uploadSignImage()" class="btn-animated bg-blue-500 text-white p-2 rounded w-full">                Upload Image            </button>            <p id="upload-response" class="text-sm text-gray-600 mt-2"></p>        </div>        <div class="tab-content p-4">            <h2 class="text-xl font-bold mb-4">Detect Sign Image</h2>            <input type="file" id="detect-image" accept="image/jpeg" class="w-full p-2 border rounded mb-2">            <button onclick="detectSignImage()" class="btn-animated bg-blue-500 text-white p-2 rounded w-full">                Detect Image            </button>            <p id="detect-response" class="text-sm text-gray-600 mt-2"></p>        </div>        <div class="tab-content p-4">            <h2 class="text-xl font-bold mb-4">Analyze Sign</h2>            <select id="language" class="w-full p-2 border rounded mb-2">                <option value="ar">Arabic</option>                <option value="en">English</option>            </select>            <input type="file" id="imageInput" accept="image/jpeg" class="w-full p-2 border rounded mb-2">            <button onclick="analyzeSign()" class="btn-animated bg-blue-500 text-white p-2 rounded w-full">                Analyze Image            </button>            <p id="result" class="text-sm text-gray-600 mt-2"></p>        </div>    </div>    <script>      let videoElement = document.getElementById('videoElement');        socket;    function connectSocket() {        socket = io.connect('http://127.0.0.1:5000');        // ✅ Receive recognized text from server        socket.on('recognized_text', function (data) {            document.getElementById("recognized-text").innerText = "Recognized Sign: " + data.text;        });    }    async function startVideoCall() {        try {            document.getElementById("recognized-text").innerText = "Starting Video...";            if (!socket) {                connectSocket();            }            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });            video.srcObject = stream;            const canvas = document.createElement("canvas");            const ctx = canvas.getContext("2d");            setInterval(() => {                canvas.width = video.videoWidth;                canvas.height = video.videoHeight;                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);                canvas.toBlob(blob => {                    if (socket) {                        socket.emit('video_frame', blob);                    }                }, 'image/jpeg');            }, 500);  // Send frames every 500ms        } catch (error) {            console.error("Error accessing camera:", error);            alert("Please allow camera permissions.");        }    }        // --------------------------------------------        let videoQueue = [];        let currentIndex = 0;        async function getSignImages() {            const textInput = document.getElementById("sign-text").value;            const language = document.getElementById("sign-language").value;            try {                const response = await fetch('/get_sign_images', {                    method: 'POST',                    headers: { 'Content-Type': 'application/json' },                    body: JSON.stringify({ text: textInput, language: language })                });                if (!response.ok) {                    throw new Error(`HTTP error! status: ${response.status}`);                }                const data = await response.json();                videoQueue = data.sign_videos;                currentIndex = 0;                if (videoQueue.length > 0) {                    displaySentence(textInput);                    playNextVideo();                } else {                    alert("No videos found for the entered text.");                }            } catch (error) {                console.error("Error fetching sign images:", error);                alert("An error occurred while fetching sign images.");            }        }        function displaySentence(sentence) {            const sentenceDisplay = document.getElementById("sentence-display");            sentenceDisplay.innerHTML = sentence.split('').map((char, index) => {                return `<span id="char-${index}" class="text-gray-700">${char}</span>`;            }).join('');        }        function playNextVideo() {            if (currentIndex >= videoQueue.length) return;            const videoElement = document.getElementById("sign-video");            const sentenceDisplay = document.getElementById("sentence-display");            // Remove previous highlight            if (currentIndex > 0) {                document.getElementById(`char-${currentIndex - 1}`).classList.remove("highlight");                document.getElementById(`char-${currentIndex - 1}`).classList.add("text-gray-700");            }            // Highlight the current character            document.getElementById(`char-${currentIndex}`).classList.add("highlight");            videoElement.src = videoQueue[currentIndex].video;            videoElement.classList.remove("hidden");            videoElement.play();            videoElement.onended = () => {                currentIndex++;                if (currentIndex < videoQueue.length) {                    setTimeout(playNextVideo, 1000); // Delay before playing the next video                } else {                    document.getElementById(`char-${currentIndex - 1}`).classList.remove("highlight");                    videoElement.classList.add("hidden");                }            };        }        function openTab(event, tabName) {            let tabContents = document.getElementsByClassName("tab-content");            for (let i = 0; i < tabContents.length; i++) {                tabContents[i].classList.add("hidden");            }            document.getElementById(tabName).classList.remove("hidden");        }        document.getElementById("register-type").addEventListener("change", function () {            let registerButton = document.getElementById("register-button");            if (this.value === "disabled_user") {                registerButton.disabled = true;                registerButton.classList.add("bg-gray-400");                registerButton.classList.remove("bg-blue-500");            } else {                registerButton.disabled = false;                registerButton.classList.add("bg-blue-500");                registerButton.classList.remove("bg-gray-400");            }        });        async function registerUser() {            debugger;            const userType = document.getElementById("register-type").value;            console.log(userType)            if (userType === "disabled_user") {                document.getElementById("register-response").textContent = "Registration not allowed for disabled users.";                return;            }            debugger;            const response = await fetch('/register', {                method: 'POST',                headers: { 'Content-Type': 'application/json' },                body: JSON.stringify({                    name: document.getElementById('register-name').value,                    phone_number: document.getElementById('register-phone').value,                    address: document.getElementById('register-address').value,                    user_type: userType,                    password: document.getElementById('register-password').value                })            });            document.getElementById('register-response').textContent = await response.text();        }        async function loginUser() {            const response = await fetch('/login', {                method: 'POST',                headers: { 'Content-Type': 'application/json' },                body: JSON.stringify({                    phone_number: document.getElementById('login-phone').value,                    password: document.getElementById('login-password').value                })            });            document.getElementById('login-response').textContent = await response.text();        }        async function addVideo() {            const response = await fetch('/add_video', {                method: 'POST',                headers: { 'Content-Type': 'application/json' },                body: JSON.stringify({                    character_name: document.getElementById('video-character').value,                    character_video: document.getElementById('video-url').value                })            });            document.getElementById('video-response').textContent = await response.text();        }        // async function getSignImages() {        //     const response = await fetch('/get_sign_images', {        //         method: 'POST',        //         headers: { 'Content-Type': 'application/json' },        //         body: JSON.stringify({ text: document.getElementById('sign-text').value })        //     });        //     const data = await response.json();        //     document.getElementById('sign-images').textContent = JSON.stringify(data, null, 2);        // }      async function getVideos() {            const response = await fetch('/get_videos');            const data = await response.json();            const videosGrid = document.getElementById('videos-grid');            videosGrid.innerHTML = ""; // Clear previous videos            data.videos.forEach(video => {                const videoCard = document.createElement('div');                videoCard.className = "p-4 bg-white shadow-md rounded-lg text-center";                const characterText = document.createElement('p');                characterText.className = "text-xl font-bold mb-2";                characterText.textContent = video[1]; // Video title or description                const videoElement = document.createElement('div'); // Use a div to conditionally load video elements                // Check if the video is from YouTube                if (video[2].includes('youtube.com')) {                    const videoId = getYouTubeVideoId(video[2]); // Get video ID from URL                    const iframe = document.createElement('iframe');                    iframe.src = `https://www.youtube.com/embed/${videoId}`;                    iframe.width = '100%';                    iframe.height = '315';                    iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';                    iframe.setAttribute('allowfullscreen', true);                    videoElement.appendChild(iframe);                }                // Check if the video is from Google Drive                else if (video[2].includes('drive.google.com')) {                    const fileId = getGoogleDriveFileId(video[2]); // Extract the file ID from the Google Drive link                    const iframe = document.createElement('iframe');                    iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;                    iframe.width = '100%';                    iframe.height = '315';                    iframe.setAttribute('frameborder', '0');                    videoElement.appendChild(iframe);                }                // If it's a direct MP4 link                else if (video[2].endsWith('.mp4')) {                    const videoElementPlayer = document.createElement('video');                    videoElementPlayer.src = video[2];                    videoElementPlayer.controls = true;                    videoElementPlayer.className = "w-full rounded-md shadow-sm";                    videoElement.appendChild(videoElementPlayer);                }                videoCard.appendChild(characterText);                videoCard.appendChild(videoElement);                videosGrid.appendChild(videoCard);            });        }        // Helper function to extract YouTube video ID from a URL        function getYouTubeVideoId(url) {            const regExp = /(?:https?:\/\/(?:www\.)?youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/([^"&?\/\s]*))|youtu\.be\/([^"&?\/\s]*))/;            const match = url.match(regExp);            return match && match[1] ? match[1] : match && match[2] ? match[2] : null;        }        // Helper function to extract Google Drive file ID from a URL        function getGoogleDriveFileId(url) {            const regExp = /(?:drive\.google\.com\/file\/d\/)(.*?)(?:\/|$)/;            const match = url.match(regExp);            return match && match[1] ? match[1] : null;        }        const video = document.getElementById("camera");        const result = document.getElementById("result");        // الوصول إلى الكاميرا        navigator.mediaDevices.getUserMedia({ video: true })            .then(stream => {                video.srcObject = stream;            })            .catch(error => {                console.error("Error accessing camera:", error);                alert("Please allow camera permissions.");            });        // التقاط الصورة        function captureImage() {            const canvas = document.createElement("canvas");            canvas.width = video.videoWidth;            canvas.height = video.videoHeight;            const context = canvas.getContext("2d");            context.drawImage(video, 0, 0, canvas.width, canvas.height);            const imageData = canvas.toDataURL("image/jpeg").split(",")[1]; // تحويل الصورة إلى Base64            const language = document.getElementById("language").value;            fetch("/detect_sign", {                method: "POST",                headers: { "Content-Type": "application/json" },                body: JSON.stringify({ image: imageData, language: language })            })            .then(response => response.json())            .then(data => {                if (data.error) {                    result.textContent = `Error: ${data.error}`;                } else {
+                    result.textContent = `Gesture: ${data.gesture}`;
                 }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                result.textContent = "An error occurred.";
             });
         }
-
-        function startVideoCall(username) {
-            var video = document.getElementById('videoFeed');
-            video.src = '/video_feed';
-        }
-
-        function logout() {
-            localStorage.removeItem('loggedInUser');
-            window.location.href = '/login';
-        }
-
-        document.getElementById('loggedInUserName').textContent = loggedInUser;
-        populateUserList();
-
-        var source = new EventSource('/video_feed');
-        source.addEventListener('message', function (event) {
-            var data = event.data;
-            var predictedCharacter = data.trim(); // Remove whitespace
-            document.getElementById('predictedText').textContent = 'Prediction: ' + predictedCharacter;
-        });
     </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>
+``` 
